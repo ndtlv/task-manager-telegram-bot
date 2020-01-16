@@ -46,6 +46,20 @@ def get_users(message):
                                       " /users id")
 
 
+@bot.message_handler(commands=["add_user"])
+def add_user(message):
+    name = " ".join(message.text.split(' ')[0:])
+    requests.post("http://localhost:4999/users", json={'name': name})
+    bot.send_message(message.chat.id, f"{name} was added to the names list.")
+
+
+@bot.message_handler(commands=["del_user"])
+def delete_user(message):
+    id = message.text.split(' ')[0]
+    requests.delete(f"http://localhost:4999/users/{id}")
+    bot.send_message(message.chat.id, f"{id} user was deleted.")
+
+
 @bot.message_handler(commands=["dashboards"])
 def get_dashes(message):
     try:
@@ -90,20 +104,6 @@ def get_comments(message):
     bot.send_message(message.chat.id, "\n".join(
         f'user {com["user id"]}: {com["body"]}' for com in comms)
     )
-
-
-@bot.message_handler(commands=["add_user"])
-def add_user(message):
-    name = " ".join(message.text.split(' ')[1:])
-    requests.post("http://localhost:5000/users", json={'name': name})
-    bot.send_message(message.chat.id, f"{name} was added to the names list.")
-
-
-@bot.message_handler(commands=["del_user"])
-def delete_user(message):
-    id = message.text.split(' ')[1]
-    requests.delete(f"http://localhost:5000/users/{id}")
-    bot.send_message(message.chat.id, f"{id} user was deleted.")
 
 
 if __name__ == "__main__":
